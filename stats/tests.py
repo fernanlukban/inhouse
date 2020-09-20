@@ -70,3 +70,38 @@ class GameStatModels(TestCase):
         self.assertEqual(
             red_damage.total_damage_to_champs, [13400, 16100, 5700, 33300, 14900]
         )
+
+    def test_ward_stat_wards_placed(self):
+        blue_wards, red_wards = GameWardStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_wards.wards_placed, [4, 6, 12, 10, 9])
+        self.assertEqual(red_wards.wards_placed, [11, 8, 15, 6, 5])
+
+    def test_ward_stat_wards_destroyed(self):
+        blue_wards, red_wards = GameWardStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_wards.wards_destroyed, [4, 3, 8, 0, 0])
+        self.assertEqual(red_wards.wards_destroyed, [3, 1, 8, 1, 3])
+
+    def test_ward_stat_control_wards_purchased(self):
+        blue_wards, red_wards = GameWardStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_wards.control_wards_purchased, [1, 2, 1, 2, 2])
+        self.assertEqual(red_wards.control_wards_purchased, [3, 1, 4, 0, 3])
+
+    def test_income_stat_gold_earned(self):
+        blue_income, red_income = GameIncomeStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_income.gold_earned, [11000, 9300, 5800, 7800, 7400])
+        self.assertEqual(red_income.gold_earned, [11800, 11700, 7600, 14400, 10700])
+
+    def test_income_stat_gold_spent(self):
+        blue_income, red_income = GameIncomeStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_income.gold_spent, [10800, 9000, 5300, 7300, 7200])
+        self.assertEqual(red_income.gold_spent, [10800, 10200, 5500, 10100, 10300])

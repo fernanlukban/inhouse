@@ -8,6 +8,10 @@ class SidedCreatableStatsFromMatchHistory(SidedCreateableFromMatchHistory):
         # turns 1k to 1000
         return int(float(text[:-1]) * 1000)
 
+    @staticmethod
+    def format_with_null(text):
+        return 0 if "-" in text else int(text)
+
     @classmethod
     def setup_stats(
         cls, match_history, new_model, is_blue_side, header, field_name, fmt
@@ -210,16 +214,26 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
 
     @property
     def wards_placed(self):
-        return [getattr(self, f"{CONVERT[WARDS_PLACED]}_{i+1}") for i in range(5)]
+        return [
+            getattr(self, f"{GameWardStat.CONVERT[GameWardStat.WARDS_PLACED]}_{i+1}")
+            for i in range(5)
+        ]
 
     @property
     def wards_destroyed(self):
-        return [getattr(self, f"{CONVERT[WARDS_DESTROYED]}_{i+1}") for i in range(5)]
+        return [
+            getattr(self, f"{GameWardStat.CONVERT[GameWardStat.WARDS_DESTROYED]}_{i+1}")
+            for i in range(5)
+        ]
 
     @property
     def control_wards_purchased(self):
         return [
-            getattr(self, f"{CONVERT[CONTROL_WARDS_PURCHASED]}_{i+1}") for i in range(5)
+            getattr(
+                self,
+                f"{GameWardStat.CONVERT[GameWardStat.CONTROL_WARDS_PURCHASED]}_{i+1}",
+            )
+            for i in range(5)
         ]
 
     WARDS_PLACED = "Wards Placed"
@@ -244,7 +258,7 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
                 is_blue_side,
                 header,
                 field,
-                SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+                SidedCreatableStatsFromMatchHistory.format_with_null,
             )
 
 
@@ -273,20 +287,40 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
 
     @property
     def gold_earned(self):
-        return [getattr(self, f"{CONVERT[GOLD_EARNED]}_{i+1}") for i in range(5)]
+        return [
+            getattr(
+                self, f"{GameIncomeStat.CONVERT[GameIncomeStat.GOLD_EARNED][0]}_{i+1}"
+            )
+            for i in range(5)
+        ]
 
     @property
     def gold_spent(self):
-        return [getattr(self, f"{CONVERT[GOLD_SPENT]}_{i+1}") for i in range(5)]
+        return [
+            getattr(
+                self, f"{GameIncomeStat.CONVERT[GameIncomeStat.GOLD_SPENT][0]}_{i+1}"
+            )
+            for i in range(5)
+        ]
 
     @property
     def minions_killed(self):
-        return [getattr(self, f"{CONVERT[MINIONS_KILLED]}_{i+1}") for i in range(5)]
+        return [
+            getattr(
+                self,
+                f"{GameIncomeStat.CONVERT[GameIncomeStat.MINIONS_KILLED][0]}_{i+1}",
+            )
+            for i in range(5)
+        ]
 
     @property
     def neutral_minions_killed(self):
         return [
-            getattr(self, f"{CONVERT[NEUTRAL_MINIONS_KILLED]}_{i+1}") for i in range(5)
+            getattr(
+                self,
+                f"{GameIncomeStat.CONVERT[GameIncomeStat.NEUTRAL_MINIONS_KILLED][0]}_{i+1}",
+            )
+            for i in range(5)
         ]
 
     GOLD_EARNED = "Gold Earned"
@@ -295,10 +329,22 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
     NEUTRAL_MINIONS_KILLED = "Neutral Minions Killed"
 
     CONVERT = {
-        GOLD_EARNED: "gold_earned",
-        GOLD_SPENT: "gold_spent",
-        MINIONS_KILLED: "minions_killed",
-        NEUTRAL_MINIONS_KILLED: "neutral_minions_killed",
+        GOLD_EARNED: (
+            "gold_earned",
+            SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+        ),
+        GOLD_SPENT: (
+            "gold_spent",
+            SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+        ),
+        MINIONS_KILLED: (
+            "minions_killed",
+            SidedCreatableStatsFromMatchHistory.format_with_null,
+        ),
+        NEUTRAL_MINIONS_KILLED: (
+            "neutral_minions_killed",
+            SidedCreatableStatsFromMatchHistory.format_with_null,
+        ),
     }
 
     @classmethod
@@ -306,14 +352,14 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
         is_blue_side = kwargs["is_blue_side"]
         if not is_blue_side:
             new_model.is_blue_side = False
-        for header, field in cls.CONVERT.items():
+        for header, (field, formatter) in cls.CONVERT.items():
             cls.setup_stats(
                 match_history,
                 new_model,
                 is_blue_side,
                 header,
                 field,
-                SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+                formatter,
             )
 
 
