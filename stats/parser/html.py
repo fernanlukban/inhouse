@@ -61,9 +61,7 @@ class MatchHistory:
     @classmethod
     def from_file(cls, file_name):
         with open(file_name, 'r') as file:
-            html = "".join(
-                map(lambda line: line.rstrip('\n').rstrip('\r'), file))
-            return cls(html)
+            return cls(file)
 
 
 class Bans:
