@@ -15,8 +15,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PlayerStat',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('player', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='players.player')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('player',
+                 models.OneToOneField(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='players.player')),
             ],
         ),
     ]

@@ -1,3 +1,8 @@
 from .html import MatchHistory
+import unittest
 
-match = MatchHistory.from_file('/mnt/c/Users/Fernan Lukban/Documents/inhouse/stats/parser/Match History Complete.html')
+
+class TestMatchHistory:
+    def setUp(self):
+        self.match = MatchHistory.from_file(
+            '/mnt/c/Users/Fernan Lukban/Documents/inhouse/stats/parser/Match History Complete.html')

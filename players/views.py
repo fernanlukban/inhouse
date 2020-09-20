@@ -4,8 +4,11 @@ from django.http import HttpResponse, Http404
 from .models import Player
 
 # Create your views here.
+
+
 def index(request):
     return HttpResponse("Hello")
+
 
 def view_player(request, username):
     try:
