@@ -56,10 +56,10 @@ class GameInfoTestCase(TestCase):
         players = GamePlayer.from_match_history_all(self.match, game=self.game)
         blue_players, red_players = players[:5], players[5:]
         self.assertEqual(
-            [player.blue_side for player in blue_players], [True for i in range(5)]
+            [player.is_blue_side for player in blue_players], [True for i in range(5)]
         )
         self.assertEqual(
-            [player.blue_side for player in red_players], [False for i in range(5)]
+            [player.is_blue_side for player in red_players], [False for i in range(5)]
         )
 
     def test_game_player_from_match_history_all_champion(self):

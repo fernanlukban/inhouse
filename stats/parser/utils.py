@@ -30,8 +30,8 @@ class SidedCreateableFromMatchHistory(CreateableFromMatchHistory):
     def setup_from_match_history_sided(
         cls, match_history, blue_new_model, red_new_model
     ):
-        cls.setup_from_match_history(match_history, blue_new_model, is_blue=True)
-        cls.setup_from_match_history(match_history, red_new_model, is_blue=False)
+        cls.setup_from_match_history(match_history, blue_new_model, is_blue_side=True)
+        cls.setup_from_match_history(match_history, red_new_model, is_blue_side=False)
 
     @classmethod
     def from_match_history_sided(cls, match_history, *args, **kwargs):

@@ -91,7 +91,7 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
         "players.Player", on_delete=models.CASCADE, null=True, blank=True
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    blue_side = models.BooleanField(default=True)
+    is_blue_side = models.BooleanField(default=True)
     champion = models.CharField(max_length=20, null=True, blank=True)
     role = models.CharField(max_length=10, null=True, blank=True)
     captain = models.BooleanField(default=False)
@@ -111,7 +111,7 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
                 new_game_player = GamePlayer()
                 new_game_player.game = kwargs["game"]
                 new_game_player.champion = champion
-                new_game_player.blue_side = True if i == 0 else False
+                new_game_player.is_blue_side = True if i == 0 else False
                 try:
                     player_object_from_player_name = Player.objects.get(
                         username=player_name
