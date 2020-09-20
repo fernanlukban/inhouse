@@ -17,11 +17,8 @@ class SidedCreatableStatsFromMatchHistory(SidedCreateableFromMatchHistory):
         else:
             header_values = match_history.stats[header][5:]
         for i, header_text in enumerate(header_values):
-            largest_killing_spree = fmt(header_text)
-            setattr(
-                new_model,
-                f"{field_name}_{i+1}",
-            )
+            new_value = fmt(header_text)
+            setattr(new_model, f"{field_name}_{i+1}", new_value)
 
 
 # Create your models here.
@@ -90,7 +87,7 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
 
     @property
     def largest_multi_kills(self):
-        return [getattr(self, f"largest_multi_kill_5_{i+1}") for i in range(5)]
+        return [getattr(self, f"largest_multi_kill_{i+1}") for i in range(5)]
 
     KDA = "KDA"
     LARGEST_KILLING_SPREE = "Largest Killing Spree"
@@ -115,16 +112,16 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
             match_history,
             new_model,
             is_blue_side,
-            LARGEST_KILLING_SPREE,
-            CONVERT[LARGEST_KILLING_SPREE],
+            cls.LARGEST_KILLING_SPREE,
+            cls.CONVERT[cls.LARGEST_KILLING_SPREE],
             int,
         )
         cls.setup_stats(
             match_history,
             new_model,
             is_blue_side,
-            LARGEST_MULTI_KILL,
-            CONVERT[LARGEST_MULTI_KILL],
+            cls.LARGEST_MULTI_KILL,
+            cls.CONVERT[cls.LARGEST_MULTI_KILL],
             int,
         )
         cls.setup_first_blood(match_history, new_model, is_blue_side)
@@ -136,7 +133,7 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
         else:
             kdas = match_history.stats[GameCombatStat.KDA][5:]
         for i, kda in enumerate(kdas):
-            kills, deaths, assists = map(kdas.split("/"), lambda x: int(x))
+            kills, deaths, assists = map(lambda x: int(x), kda.split("/"))
             setattr(new_model, f"kills_{i+1}", kills)
             setattr(new_model, f"deaths_{i+1}", deaths)
             setattr(new_model, f"assists_{i+1}", assists)
@@ -184,8 +181,8 @@ class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
             match_history,
             new_model,
             is_blue_side,
-            TOTAL_DAMAGE_TO_CHAMPIONS,
-            CONVERT[TOTAL_DAMAGE_TO_CHAMPIONS],
+            cls.TOTAL_DAMAGE_TO_CHAMPIONS,
+            cls.CONVERT[cls.TOTAL_DAMAGE_TO_CHAMPIONS],
             SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
         )
 
@@ -237,7 +234,7 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
         is_blue_side = kwargs["is_blue_side"]
         if not is_blue_side:
             new_model.is_blue_side = False
-        for header, field in CONVERT.items():
+        for header, field in cls.CONVERT.items():
             cls.setup_stats(
                 match_history,
                 new_model,
@@ -306,7 +303,7 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
         is_blue_side = kwargs["is_blue_side"]
         if not is_blue_side:
             new_model.is_blue_side = False
-        for header, field in CONVERT.items():
+        for header, field in cls.CONVERT.items():
             cls.setup_stats(
                 match_history,
                 new_model,
