@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0004_auto_20200920_0915'),
+        ("games", "0004_auto_20200920_0915"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='gameplayer',
-            name='captain',
+            model_name="gameplayer",
+            name="captain",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='gameplayer',
-            name='pick_order',
+            model_name="gameplayer",
+            name="pick_order",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

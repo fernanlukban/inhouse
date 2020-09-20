@@ -9,26 +9,55 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('players', '0001_initial'),
+        ("players", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('description', models.CharField(blank=True, max_length=200, null=True)),
-                ('winner', models.CharField(blank=True, max_length=10, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                (
+                    "description",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                ("winner", models.CharField(blank=True, max_length=10, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='GamePlayer',
+            name="GamePlayer",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('side', models.CharField(max_length=10)),
-                ('game', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='games.game')),
-                ('player', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='players.player')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("side", models.CharField(max_length=10)),
+                (
+                    "game",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="games.game"
+                    ),
+                ),
+                (
+                    "player",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="players.player"
+                    ),
+                ),
             ],
         ),
     ]

@@ -7,24 +7,29 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('players', '0001_initial'),
-        ('stats', '0001_initial'),
+        ("players", "0001_initial"),
+        ("stats", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PlayerStat',
+            name="PlayerStat",
             fields=[
-                ('id',
-                 models.AutoField(
-                     auto_created=True,
-                     primary_key=True,
-                     serialize=False,
-                     verbose_name='ID')),
-                ('player',
-                 models.OneToOneField(
-                     on_delete=django.db.models.deletion.CASCADE,
-                     to='players.player')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "player",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="players.player"
+                    ),
+                ),
             ],
         ),
     ]

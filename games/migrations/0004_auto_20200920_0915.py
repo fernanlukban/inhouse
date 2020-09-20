@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0003_auto_20200920_0914'),
+        ("games", "0003_auto_20200920_0914"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='game',
-            name='winner',
+            model_name="game",
+            name="winner",
         ),
         migrations.AddField(
-            model_name='gameinfo',
-            name='winner',
+            model_name="gameinfo",
+            name="winner",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
     ]

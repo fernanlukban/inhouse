@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0001_initial'),
+        ("games", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='gameplayer',
-            name='side',
+            model_name="gameplayer",
+            name="side",
         ),
         migrations.AddField(
-            model_name='gameplayer',
-            name='blue_side',
+            model_name="gameplayer",
+            name="blue_side",
             field=models.BooleanField(default=True),
         ),
     ]

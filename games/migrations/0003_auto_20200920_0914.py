@@ -7,51 +7,90 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('games', '0002_auto_20200920_0840'),
+        ("games", "0002_auto_20200920_0840"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GameInfo',
+            name="GameInfo",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('game', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='games.game')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "game",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="games.game"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='gameplayer',
-            name='champion',
+            model_name="gameplayer",
+            name="champion",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='gameplayer',
-            name='role',
+            model_name="gameplayer",
+            name="role",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
         migrations.CreateModel(
-            name='GamePickList',
+            name="GamePickList",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pick_1', models.CharField(max_length=20)),
-                ('pick_2', models.CharField(max_length=20)),
-                ('pick_3', models.CharField(max_length=20)),
-                ('pick_4', models.CharField(max_length=20)),
-                ('pick_5', models.CharField(max_length=20)),
-                ('blue_side', models.BooleanField(default=True)),
-                ('info', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='games.gameinfo')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("pick_1", models.CharField(max_length=20)),
+                ("pick_2", models.CharField(max_length=20)),
+                ("pick_3", models.CharField(max_length=20)),
+                ("pick_4", models.CharField(max_length=20)),
+                ("pick_5", models.CharField(max_length=20)),
+                ("blue_side", models.BooleanField(default=True)),
+                (
+                    "info",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="games.gameinfo"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='GameBanList',
+            name="GameBanList",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ban_1', models.CharField(max_length=20)),
-                ('ban_2', models.CharField(max_length=20)),
-                ('ban_3', models.CharField(max_length=20)),
-                ('ban_4', models.CharField(max_length=20)),
-                ('ban_5', models.CharField(max_length=20)),
-                ('blue_side', models.BooleanField(default=True)),
-                ('info', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='games.gameinfo')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ban_1", models.CharField(max_length=20)),
+                ("ban_2", models.CharField(max_length=20)),
+                ("ban_3", models.CharField(max_length=20)),
+                ("ban_4", models.CharField(max_length=20)),
+                ("ban_5", models.CharField(max_length=20)),
+                ("blue_side", models.BooleanField(default=True)),
+                (
+                    "info",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="games.gameinfo"
+                    ),
+                ),
             ],
         ),
     ]

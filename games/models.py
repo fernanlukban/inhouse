@@ -16,8 +16,7 @@ class Game(models.Model):
 
 class GameInfo(models.Model):
     game = models.OneToOneField(Game, on_delete=models.CASCADE)
-    winner = models.CharField(
-        max_length=SIDE_MAX_LENGTH, null=True, blank=True)
+    winner = models.CharField(max_length=SIDE_MAX_LENGTH, null=True, blank=True)
 
 
 class GameBanList(models.Model):
@@ -41,7 +40,7 @@ class GamePickList(models.Model):
 
 
 class GamePlayer(models.Model):
-    player = models.OneToOneField('players.Player', on_delete=models.CASCADE)
+    player = models.OneToOneField("players.Player", on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     blue_side = models.BooleanField(default=True)
     champion = models.CharField(max_length=20, null=True, blank=True)

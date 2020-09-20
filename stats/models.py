@@ -4,7 +4,7 @@ from django.db import models
 
 
 class GameStat(models.Model):
-    game = models.OneToOneField('games.Game', on_delete=models.CASCADE)
+    game = models.OneToOneField("games.Game", on_delete=models.CASCADE)
 
     def __str__(self):
         game_name = self.game.name
@@ -12,4 +12,4 @@ class GameStat(models.Model):
 
 
 class PlayerStat(models.Model):
-    player = models.OneToOneField('players.Player', on_delete=models.CASCADE)
+    player = models.OneToOneField("players.Player", on_delete=models.CASCADE)
