@@ -136,7 +136,7 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
         return super().create_from_match_history(match_history, *args, **kwargs)
 
     def __str__(self):
-        return f"Game: {self.game}/Player: {self.player}/Side: {'blue' if self.blue_side else 'red'}"
+        return f"Game: {self.game}/Player: {self.player}/Side: {'blue' if self.is_blue_side else 'red'}"
 
 
 EXPORTED_MODELS = [Game, GameInfo, GameBanList, GamePickList, GamePlayer]
