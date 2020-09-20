@@ -164,7 +164,10 @@ class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
     @property
     def total_damage_to_champs(self):
         return [
-            getattr(self, f"{CONVERT[TOTAL_DAMAGE_TO_CHAMPIONS]}_{i+1}")
+            getattr(
+                self,
+                f"{GameDamageStat.CONVERT[GameDamageStat.TOTAL_DAMAGE_TO_CHAMPIONS]}_{i+1}",
+            )
             for i in range(5)
         ]
 

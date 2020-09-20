@@ -59,3 +59,14 @@ class GameStatModels(TestCase):
         )
         self.assertEqual(blue_combat.first_blood, 0)
         self.assertEqual(red_combat.first_blood, 2)
+
+    def test_damage_stat_total_damage_to_champs(self):
+        blue_damage, red_damage = GameDamageStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(
+            blue_damage.total_damage_to_champs, [13100, 11000, 4000, 7100, 11200]
+        )
+        self.assertEqual(
+            red_damage.total_damage_to_champs, [13400, 16100, 5700, 33300, 14900]
+        )
