@@ -23,18 +23,13 @@ class MatchHistory:
     @classmethod
     def find_champion_names_for_bans(cls, bans_container):
         champion_names = []
-        for champion_nameplate_div in cls.parse_ban_container_for_champion_nameplate_div(
-                bans_container):
+        for champion_nameplate_div in bans_container.find_all('div', class_='champion-nameplate'):
             champion_name = champion_nameplate_div.find(
                 lambda div: div.has_attr('data-rg-id'))['data-rg-id']
             champion_names.append(champion_name)
         return champion_names
 
-    @classmethod
-    def parse_ban_container_for_champion_nameplate_div(cls, bans_container):
-        return bans_container.find_all('div', class_='champion-nameplate')
-
-    @classmethod
+    @ classmethod
     def parse_picks(cls, soup):
         # select lets us find a div that has both team and classic but in any order
         picks_container = soup.find_all('div', class_='team-selector')
@@ -42,7 +37,7 @@ class MatchHistory:
             raise Exception("Could not properly find picks")
         return cls.find_champion_names_for_picks(picks_container[0]), cls.find_champion_names_for_picks(picks_container[1])
 
-    @classmethod
+    @ classmethod
     def find_champion_names_for_picks(cls, picks_container):
         champion_names = []
         for champion_name_div in picks_container.find_all(
@@ -50,7 +45,7 @@ class MatchHistory:
             champion_names.append(champion_name_div['data-rg-id'])
         return champion_names
 
-    @classmethod
+    @ classmethod
     def parse_players(cls, soup):
         players = []
         for player_div in soup.find_all('div', class_='champion-nameplate-name'):
@@ -58,7 +53,7 @@ class MatchHistory:
             players.append(player_link.text)
         return players[:5], players[5:]
 
-    @classmethod
+    @ classmethod
     def from_file(cls, file_name):
         with open(file_name, 'r') as file:
             return cls(file)
