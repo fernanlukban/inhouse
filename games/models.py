@@ -96,10 +96,14 @@ class GameBanList(models.Model, SidedCreateableFromMatchHistory):
         else:
             bans = match_history.red_side_bans
         for i, ban in enumerate(bans):
-            setattr(new_model, f"ban_{i}", ban)
+            setattr(new_model, f"ban_{i+1}", ban)
 
     def __str__(self):
-        return f"GameBanList(info={self.info.game}, [{', '.join([getattr(self, f'ban_{i}') for i in range(1,6)])}]"
+        return f"GameBanList(info={self.info.game}, {self.bans})"
+
+    @property
+    def bans(self):
+        return [getattr(self, f"ban_{i+1}") for i in range(5)]
 
 
 class GamePickList(models.Model, SidedCreateableFromMatchHistory):
@@ -118,9 +122,16 @@ class GamePickList(models.Model, SidedCreateableFromMatchHistory):
             picks = match_history.blue_side_picks
             new_model.blue_side = True
         else:
-            bans = match_history.red_side_picks
+            picks = match_history.red_side_picks
         for i, pick in enumerate(picks):
-            setattr(new_model, f"ban_{i}", pick)
+            setattr(new_model, f"pick_{i+1}", pick)
+
+    def __str__(self):
+        return f"GamePickList(info={self.info.game}, {self.picks})"
+
+    @property
+    def picks(self):
+        return [getattr(self, f"pick_{i+1}") for i in range(5)]
 
 
 class GamePlayer(models.Model, CreateableFromMatchHistory):
@@ -149,16 +160,15 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
                 new_game_player.game = kwargs["game"]
                 new_game_player.champion = champion
                 new_game_player.blue_side = True if i == 0 else False
-                if "player" in kwargs:
-                    new_game_player.player = kwargs["player"]
-                else:
-                    try:
-                        player_object_from_player_name = Player.objects.get()
-                    except Player.DoesNotExist:
-                        player_object_from_player_name = Player.objects.create(
-                            username=player_name
-                        )
-                    new_game_player.player = player_object_from_player_name
+                try:
+                    player_object_from_player_name = Player.objects.get(
+                        username=player_name
+                    )
+                except Player.DoesNotExist:
+                    player_object_from_player_name = Player.objects.create(
+                        username=player_name
+                    )
+                new_game_player.player = player_object_from_player_name
                 players.append(new_game_player)
         return players
 
