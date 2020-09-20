@@ -24,3 +24,9 @@ class TestMatchHistory(unittest.TestCase):
                          'FruitSmoothie27', 'Shinigámí', 'Koó', 'enwards', 'Vassallo'])
         self.assertEqual(self.match.red_side_players, [
                          'fk the system', 'Chicago Boy', 'Espia', 'KeIlen', 'opsadboys'])
+
+    def test_parse_objectives(self):
+        self.assertEqual(self.blue_side_objectives, {
+                         'tower_kills': '1', 'baron_kills': '0', 'dragon_kills': '0', 'rift_herald_kills': '2', 'inhibitor_kills': '0'})
+        self.assertEqual(self.red_side_objectives, {
+                         'tower_kills': '9', 'baron_kills': '0', 'dragon_kills': '4', 'rift_herald_kills': '0', 'inhibitor_kills': '1'})
