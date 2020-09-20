@@ -3,11 +3,11 @@ from bs4 import BeautifulSoup
 
 class MatchHistory:
     def __init__(self, html):
-        self._soup = BeautifulSoup(html, 'html.parser')
-        self._blue_side_bans, self._red_side_bans = MatchHistory.parse_bans(
-            self._soup)
-        self._blue_side_picks, self._red_side_picks = MatchHistory.parse_picks(
-            self._soup)
+        self.soup = BeautifulSoup(html, 'html.parser')
+        self.blue_side_bans, self.red_side_bans = MatchHistory.parse_bans(
+            self.soup)
+        # self.blue_side_picks, self.red_side_picks = MatchHistory.parse_picks(
+        # self._soup)
 
     @classmethod
     def parse_bans(cls, soup):
