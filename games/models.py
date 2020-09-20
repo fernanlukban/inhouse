@@ -10,6 +10,17 @@ class Game(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
 
+    @classmethod
+    def from_match_history(cls, match_history, *args, **kwargs):
+        new_game = cls(*args, **kwargs)
+        return new_game
+
+    @classmethod
+    def create_from_match_history(cls, match_history, *args, **kwargs):
+        new_game = cls.from_match_history(cls, match_history, *args, **kwargs)
+        new_game.save()
+        return new_game
+
     def __str__(self):
         return f"Game {self.id}: {self.name if self.name else 'No name'}"
 
@@ -17,6 +28,18 @@ class Game(models.Model):
 class GameInfo(models.Model):
     game = models.OneToOneField(Game, on_delete=models.CASCADE)
     winner = models.CharField(max_length=SIDE_MAX_LENGTH, null=True, blank=True)
+
+    @classmethod
+    def from_match_history(cls, match_history, *args, **kwargs):
+        new_game_info = cls(*args, **kwargs)
+        new_game_info.winner = match_history.winner
+        return new_game_info
+
+    @classmethod
+    def create_from_match_history(cls, match_history, *args, **kwargs):
+        new_game_info = cls.new_game_info(match_history, *args, **kwargs)
+        new_game_info.save()
+        return new_game_info
 
 
 class GameBanList(models.Model):
