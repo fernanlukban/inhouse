@@ -18,3 +18,9 @@ class TestMatchHistory(unittest.TestCase):
                          'MasterYi', 'Riven', 'Thresh', 'Caitlyn', 'Syndra'])
         self.assertEqual(self.match.red_side_picks, [
                          'Lulu', 'Fiora', 'Rakan', 'Ezreal', 'Hecarim'])
+
+    def test_parse_players(self):
+        self.assertEqual(self.match.blue_side_players, [
+                         'FruitSmoothie27', 'Shinigámí', 'Koó', 'enwards', 'Vassallo'])
+        self.assertEqual(self.match.red_side_players, [
+                         'fk the system', 'Chicago Boy', 'Espia', 'KeIlen', 'opsadboys'])

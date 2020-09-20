@@ -8,6 +8,8 @@ class MatchHistory:
             self.soup)
         self.blue_side_picks, self.red_side_picks = MatchHistory.parse_picks(
             self.soup)
+        self.blue_side_players, self.red_side_players = MatchHistory.parse_players(
+            self.soup)
 
     @classmethod
     def parse_bans(cls, soup):
@@ -47,6 +49,14 @@ class MatchHistory:
                 lambda div: div.has_attr('data-rg-id')):
             champion_names.append(champion_name_div['data-rg-id'])
         return champion_names
+
+    @classmethod
+    def parse_players(cls, soup):
+        players = []
+        for player_div in soup.find_all('div', class_='champion-nameplate-name'):
+            player_link = player_div.find('a')
+            players.append(player_link.text)
+        return players[:5], players[5:]
 
     @classmethod
     def from_file(cls, file_name):
