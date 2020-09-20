@@ -23,6 +23,7 @@ class MatchHistory:
             self.red_side_objectives,
         ) = MatchHistory.parse_objectives(self.soup)
         self.stats = MatchHistory.parse_stats(self.soup)
+        self.winner = MatchHistory.parse_winner(self.soup)
 
     @classmethod
     def parse_bans(cls, soup):
@@ -100,6 +101,12 @@ class MatchHistory:
             if row_name.text != "":
                 stats[row_name.text] = row_stats
         return stats
+
+    @classmethod
+    def parse_winner(cls, soup):
+        summary = soup.find("div", class_="team-summary")
+        blue_win = summary.find("div", class_="game-conclusion").text
+        return "blue" if blue_win == "VICTORY" else "red"
 
     @classmethod
     def from_file(cls, file_name):

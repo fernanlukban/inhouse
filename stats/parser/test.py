@@ -59,6 +59,9 @@ class TestMatchHistory(unittest.TestCase):
             },
         )
 
+    def test_parse_winner(self):
+        self.assertEqual(self.match.winner, "red")
+
     def test_parse_stats(self):
         self.assertEqual(
             self.match.stats,
