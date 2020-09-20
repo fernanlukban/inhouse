@@ -3,7 +3,7 @@ from .models import Game, GameInfo, GameBanList, GamePickList, GamePlayer
 from stats.parser.html import MatchHistory
 
 # Create your tests here.
-class GameInfoTestCase(TestCase):
+class GameModels(TestCase):
     def setUp(self):
         self.match = MatchHistory.from_file(
             "/mnt/c/Users/Fernan Lukban/Documents/inhouse/stats/parser/Match History Complete.html"

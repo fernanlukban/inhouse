@@ -72,6 +72,26 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
     first_blood = models.IntegerField(default=0, choices=FIRST_BLOOD_CHOICES)
     is_blue_side = models.BooleanField(default=True)
 
+    @property
+    def kills(self):
+        return [getattr(self, f"kills_{i+1}") for i in range(5)]
+
+    @property
+    def deaths(self):
+        return [getattr(self, f"deaths_{i+1}") for i in range(5)]
+
+    @property
+    def assists(self):
+        return [getattr(self, f"assists_{i+1}") for i in range(5)]
+
+    @property
+    def largest_killing_sprees(self):
+        return [getattr(self, f"largest_killing_spree_{i+1}") for i in range(5)]
+
+    @property
+    def largest_multi_kills(self):
+        return [getattr(self, f"largest_multi_kill_5_{i+1}") for i in range(5)]
+
     KDA = "KDA"
     LARGEST_KILLING_SPREE = "Largest Killing Spree"
     LARGEST_MULTI_KILL = "Largest Multi Kill"
@@ -144,6 +164,13 @@ class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
     total_damage_to_champs_4 = models.IntegerField(default=0)
     total_damage_to_champs_5 = models.IntegerField(default=0)
 
+    @property
+    def total_damage_to_champs(self):
+        return [
+            getattr(self, f"{CONVERT[TOTAL_DAMAGE_TO_CHAMPIONS]}_{i+1}")
+            for i in range(5)
+        ]
+
     TOTAL_DAMAGE_TO_CHAMPIONS = "Total Damage to Champions"
 
     CONVERT = {TOTAL_DAMAGE_TO_CHAMPIONS: "total_damage_to_champs"}
@@ -180,6 +207,20 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
     control_wards_purchased_3 = models.IntegerField(default=0)
     control_wards_purchased_4 = models.IntegerField(default=0)
     control_wards_purchased_5 = models.IntegerField(default=0)
+
+    @property
+    def wards_placed(self):
+        return [getattr(self, f"{CONVERT[WARDS_PLACED]}_{i+1}") for i in range(5)]
+
+    @property
+    def wards_destroyed(self):
+        return [getattr(self, f"{CONVERT[WARDS_DESTROYED]}_{i+1}") for i in range(5)]
+
+    @property
+    def control_wards_purchased(self):
+        return [
+            getattr(self, f"{CONVERT[CONTROL_WARDS_PURCHASED]}_{i+1}") for i in range(5)
+        ]
 
     WARDS_PLACED = "Wards Placed"
     WARDS_DESTROYED = "Wards Destroyed"
@@ -229,6 +270,24 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
     neutral_minions_killed_3 = models.IntegerField(default=0)
     neutral_minions_killed_4 = models.IntegerField(default=0)
     neutral_minions_killed_5 = models.IntegerField(default=0)
+
+    @property
+    def gold_earned(self):
+        return [getattr(self, f"{CONVERT[GOLD_EARNED]}_{i+1}") for i in range(5)]
+
+    @property
+    def gold_spent(self):
+        return [getattr(self, f"{CONVERT[GOLD_SPENT]}_{i+1}") for i in range(5)]
+
+    @property
+    def minions_killed(self):
+        return [getattr(self, f"{CONVERT[MINIONS_KILLED]}_{i+1}") for i in range(5)]
+
+    @property
+    def neutral_minions_killed(self):
+        return [
+            getattr(self, f"{CONVERT[NEUTRAL_MINIONS_KILLED]}_{i+1}") for i in range(5)
+        ]
 
     GOLD_EARNED = "Gold Earned"
     GOLD_SPENT = "Gold Spent"
