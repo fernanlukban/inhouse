@@ -1,6 +1,29 @@
 from django.db import models
 from .parser.utils import SidedCreateableFromMatchHistory
 
+
+class SidedCreatableStatsFromMatchHistory(SidedCreateableFromMatchHistory):
+    @staticmethod
+    def format_with_k_to_int(text):
+        # turns 1k to 1000
+        return int(float(text[:-1]) * 1000)
+
+    @classmethod
+    def setup_stats(
+        cls, match_history, new_model, is_blue_side, header, field_name, fmt
+    ):
+        if is_blue_side:
+            header_values = match_history.stats[header][:5]
+        else:
+            header_values = match_history.stats[header][5:]
+        for i, header_text in enumerate(header_values):
+            largest_killing_spree = fmt(header_text)
+            setattr(
+                new_model,
+                f"{field_name}_{i+1}",
+            )
+
+
 # Create your models here.
 class GameStat(models.Model):
     game = models.OneToOneField("games.Game", on_delete=models.CASCADE)
@@ -10,8 +33,7 @@ class GameStat(models.Model):
         return f"{game_name}"
 
 
-class GameCombatStat(models.Model, SidedCreateableFromMatchHistory):
-    game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
+class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
     FIRST_BLOOD_CHOICES = [
         (0, "Not on this team"),
         (1, "Player 1"),
@@ -20,6 +42,8 @@ class GameCombatStat(models.Model, SidedCreateableFromMatchHistory):
         (4, "Player 4"),
         (5, "Player 5"),
     ]
+
+    game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     kills_1 = models.IntegerField(default=0)
     kills_2 = models.IntegerField(default=0)
     kills_3 = models.IntegerField(default=0)
@@ -48,16 +72,71 @@ class GameCombatStat(models.Model, SidedCreateableFromMatchHistory):
     first_blood = models.IntegerField(default=0, choices=FIRST_BLOOD_CHOICES)
     is_blue_side = models.BooleanField(default=True)
 
+    KDA = "KDA"
+    LARGEST_KILLING_SPREE = "Largest Killing Spree"
+    LARGEST_MULTI_KILL = "Largest Multi Kill"
+    FIRST_BLOOD = "First Blood"
+
+    FIRST_BLOOD_INDICATOR = "●"
+
+    CONVERT = {
+        LARGEST_KILLING_SPREE: "largest_killing_spree",
+        LARGEST_MULTI_KILL: "largest_multi_kill",
+        FIRST_BLOOD: "first_blood",
+    }
+
     @classmethod
     def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
-        is_blue = kwargs["is_blue"]
-        if is_blue:
-            pass
-        else:
+        is_blue_side = kwargs["is_blue_side"]
+        if not is_blue_side:
             new_model.is_blue_side = False
+        cls.setup_kda(match_history, new_model, is_blue_side)
+        cls.setup_stats(
+            match_history,
+            new_model,
+            is_blue_side,
+            LARGEST_KILLING_SPREE,
+            CONVERT[LARGEST_KILLING_SPREE],
+            int,
+        )
+        cls.setup_stats(
+            match_history,
+            new_model,
+            is_blue_side,
+            LARGEST_MULTI_KILL,
+            CONVERT[LARGEST_MULTI_KILL],
+            int,
+        )
+        cls.setup_first_blood(match_history, new_model, is_blue_side)
+
+    @classmethod
+    def setup_kda(cls, match_history, new_model, is_blue_side):
+        if is_blue_side:
+            kdas = match_history.stats[GameCombatStat.KDA][:5]
+        else:
+            kdas = match_history.stats[GameCombatStat.KDA][5:]
+        for i, kda in enumerate(kdas):
+            kills, deaths, assists = map(kdas.split("/"), lambda x: int(x))
+            setattr(new_model, f"kills_{i+1}", kills)
+            setattr(new_model, f"deaths_{i+1}", deaths)
+            setattr(new_model, f"assists_{i+1}", assists)
+
+    @classmethod
+    def setup_first_blood(cls, match_history, new_model, is_blue_side):
+        if is_blue_side:
+            first_bloods = match_history.stats[GameCombatStat.FIRST_BLOOD][:5]
+        else:
+            first_bloods = match_history.stats[GameCombatStat.FIRST_BLOOD][5:]
+        # iterate over until we find the indicator, and use that
+        # if it's not there it's just 0
+        for i, indicator in enumerate(first_bloods):
+            if indicator == GameCombatStat.FIRST_BLOOD_INDICATOR:
+                new_model.first_blood = i + 1
+                return
+        new_model.first_blood = 0
 
 
-class GameDamageStat(models.Model, SidedCreateableFromMatchHistory):
+class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     total_damage_to_champs_1 = models.IntegerField(default=0)
     total_damage_to_champs_2 = models.IntegerField(default=0)
@@ -65,8 +144,26 @@ class GameDamageStat(models.Model, SidedCreateableFromMatchHistory):
     total_damage_to_champs_4 = models.IntegerField(default=0)
     total_damage_to_champs_5 = models.IntegerField(default=0)
 
+    TOTAL_DAMAGE_TO_CHAMPIONS = "Total Damage to Champions"
 
-class GameWardStat(models.Model, SidedCreateableFromMatchHistory):
+    CONVERT = {TOTAL_DAMAGE_TO_CHAMPIONS: "total_damage_to_champs"}
+
+    @classmethod
+    def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
+        is_blue_side = kwargs["is_blue_side"]
+        if not is_blue_side:
+            new_model.is_blue_side = False
+        cls.setup_stats(
+            match_history,
+            new_model,
+            is_blue_side,
+            TOTAL_DAMAGE_TO_CHAMPIONS,
+            CONVERT[TOTAL_DAMAGE_TO_CHAMPIONS],
+            SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+        )
+
+
+class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     wards_placed_1 = models.IntegerField(default=0)
     wards_placed_2 = models.IntegerField(default=0)
@@ -84,8 +181,33 @@ class GameWardStat(models.Model, SidedCreateableFromMatchHistory):
     control_wards_purchased_4 = models.IntegerField(default=0)
     control_wards_purchased_5 = models.IntegerField(default=0)
 
+    WARDS_PLACED = "Wards Placed"
+    WARDS_DESTROYED = "Wards Destroyed"
+    CONTROL_WARDS_PURCHASED = "Control Wards Purchased"
 
-class GameIncomeStat(models.Model, SidedCreateableFromMatchHistory):
+    CONVERT = {
+        WARDS_PLACED: "wards_placed",
+        WARDS_DESTROYED: "wards_destroyed",
+        CONTROL_WARDS_PURCHASED: "control_wards_purchased",
+    }
+
+    @classmethod
+    def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
+        is_blue_side = kwargs["is_blue_side"]
+        if not is_blue_side:
+            new_model.is_blue_side = False
+        for header, field in CONVERT.items():
+            cls.setup_stats(
+                match_history,
+                new_model,
+                is_blue_side,
+                header,
+                field,
+                SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+            )
+
+
+class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     gold_earned_1 = models.IntegerField(default=0)
     gold_earned_2 = models.IntegerField(default=0)
@@ -107,6 +229,33 @@ class GameIncomeStat(models.Model, SidedCreateableFromMatchHistory):
     neutral_minions_killed_3 = models.IntegerField(default=0)
     neutral_minions_killed_4 = models.IntegerField(default=0)
     neutral_minions_killed_5 = models.IntegerField(default=0)
+
+    GOLD_EARNED = "Gold Earned"
+    GOLD_SPENT = "Gold Spent"
+    MINIONS_KILLED = "Minions Killed"
+    NEUTRAL_MINIONS_KILLED = "Neutral Minions Killed"
+
+    CONVERT = {
+        GOLD_EARNED: "gold_earned",
+        GOLD_SPENT: "gold_spent",
+        MINIONS_KILLED: "minions_killed",
+        NEUTRAL_MINIONS_KILLED: "neutral_minions_killed",
+    }
+
+    @classmethod
+    def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
+        is_blue_side = kwargs["is_blue_side"]
+        if not is_blue_side:
+            new_model.is_blue_side = False
+        for header, field in CONVERT.items():
+            cls.setup_stats(
+                match_history,
+                new_model,
+                is_blue_side,
+                header,
+                field,
+                SidedCreatableStatsFromMatchHistory.format_with_k_to_int,
+            )
 
 
 class PlayerStat(models.Model):
