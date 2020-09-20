@@ -7,11 +7,11 @@ SIDE_MAX_LENGTH = 10
 
 
 class Game(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"Game {self.id}: {self.name if self.name else 'No name'}"
 
 
 class GameInfo(models.Model):
