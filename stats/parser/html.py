@@ -97,7 +97,8 @@ class MatchHistory:
                 continue
             for column in cells:
                 row_stats.append(column.text)
-            stats[row_name.text] = row_stats
+            if row_name.text != "":
+                stats[row_name.text] = row_stats
         return stats
 
     @classmethod

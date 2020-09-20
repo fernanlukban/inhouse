@@ -24,7 +24,7 @@ class TestMatchHistory(unittest.TestCase):
             ["MasterYi", "Riven", "Thresh", "Caitlyn", "Syndra"],
         )
         self.assertEqual(
-            self.match.red_sidFe_picks, ["Lulu", "Fiora", "Rakan", "Ezreal", "Hecarim"]
+            self.match.red_side_picks, ["Lulu", "Fiora", "Rakan", "Ezreal", "Hecarim"]
         )
 
     def test_parse_players(self):
@@ -64,7 +64,6 @@ class TestMatchHistory(unittest.TestCase):
             self.match.stats,
             OrderedDict(
                 [
-                    ("", []),
                     (
                         "KDA",
                         [
