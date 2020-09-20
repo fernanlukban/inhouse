@@ -1,8 +1,7 @@
 from django.db import models
+from .parser.utils import SidedCreateableFromMatchHistory
 
 # Create your models here.
-
-
 class GameStat(models.Model):
     game = models.OneToOneField("games.Game", on_delete=models.CASCADE)
 
@@ -11,7 +10,7 @@ class GameStat(models.Model):
         return f"{game_name}"
 
 
-class GameCombatStat(models.Model):
+class GameCombatStat(models.Model, SidedCreateableFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     FIRST_BLOOD_CHOICES = [
         (0, "Not on this team"),
@@ -47,10 +46,18 @@ class GameCombatStat(models.Model):
     largest_multi_kill_4 = models.IntegerField(default=0)
     largest_multi_kill_5 = models.IntegerField(default=0)
     first_blood = models.IntegerField(default=0, choices=FIRST_BLOOD_CHOICES)
-    is_blue = models.BooleanField(default=True)
+    is_blue_side = models.BooleanField(default=True)
+
+    @classmethod
+    def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
+        is_blue = kwargs["is_blue"]
+        if is_blue:
+            pass
+        else:
+            new_model.is_blue_side = False
 
 
-class GameDamageStat(models.Model):
+class GameDamageStat(models.Model, SidedCreateableFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     total_damage_to_champs_1 = models.IntegerField(default=0)
     total_damage_to_champs_2 = models.IntegerField(default=0)
@@ -59,7 +66,7 @@ class GameDamageStat(models.Model):
     total_damage_to_champs_5 = models.IntegerField(default=0)
 
 
-class GameWardStat(models.Model):
+class GameWardStat(models.Model, SidedCreateableFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     wards_placed_1 = models.IntegerField(default=0)
     wards_placed_2 = models.IntegerField(default=0)
@@ -78,7 +85,7 @@ class GameWardStat(models.Model):
     control_wards_purchased_5 = models.IntegerField(default=0)
 
 
-class GameIncomeStat(models.Model):
+class GameIncomeStat(models.Model, SidedCreateableFromMatchHistory):
     game_stat = models.ForeignKey(GameStat, on_delete=models.CASCADE)
     gold_earned_1 = models.IntegerField(default=0)
     gold_earned_2 = models.IntegerField(default=0)

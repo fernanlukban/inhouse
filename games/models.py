@@ -37,16 +37,16 @@ class GameBanList(models.Model, SidedCreateableFromMatchHistory):
     ban_3 = models.CharField(max_length=20, default="None")
     ban_4 = models.CharField(max_length=20, default="None")
     ban_5 = models.CharField(max_length=20, default="None")
-    blue_side = models.BooleanField(default=True)
+    is_blue_side = models.BooleanField(default=True)
 
     @classmethod
     def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
-        is_blue = kwargs["is_blue"]
-        if is_blue:
+        is_blue_side = kwargs["is_blue_side"]
+        if is_blue_side:
             bans = match_history.blue_side_bans
-            new_model.blue_side = True
         else:
             bans = match_history.red_side_bans
+            new_model.is_blue_side = False
         for i, ban in enumerate(bans):
             setattr(new_model, f"ban_{i+1}", ban)
 
@@ -65,16 +65,16 @@ class GamePickList(models.Model, SidedCreateableFromMatchHistory):
     pick_3 = models.CharField(max_length=20)
     pick_4 = models.CharField(max_length=20)
     pick_5 = models.CharField(max_length=20)
-    blue_side = models.BooleanField(default=True)
+    is_blue_side = models.BooleanField(default=True)
 
     @classmethod
     def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
-        is_blue = kwargs["is_blue"]
-        if is_blue:
+        is_blue_side = kwargs["is_blue_side"]
+        if is_blue_side:
             picks = match_history.blue_side_picks
-            new_model.blue_side = True
         else:
             picks = match_history.red_side_picks
+            new_model.is_blue_side = False
         for i, pick in enumerate(picks):
             setattr(new_model, f"pick_{i+1}", pick)
 
