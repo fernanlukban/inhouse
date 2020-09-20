@@ -105,3 +105,17 @@ class GameStatModels(TestCase):
         )
         self.assertEqual(blue_income.gold_spent, [10800, 9000, 5300, 7300, 7200])
         self.assertEqual(red_income.gold_spent, [10800, 10200, 5500, 10100, 10300])
+
+    def test_income_stat_minions_killed(self):
+        blue_income, red_income = GameIncomeStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_income.minions_killed, [37, 168, 29, 162, 150])
+        self.assertEqual(red_income.minions_killed, [176, 160, 32, 211, 20])
+
+    def test_income_stat_neutral_minions_killed(self):
+        blue_income, red_income = GameIncomeStat.from_match_history_sided(
+            self.match, game_stat=self.game_stat
+        )
+        self.assertEqual(blue_income.neutral_minions_killed, [136, 3, 0, 8, 0])
+        self.assertEqual(red_income.neutral_minions_killed, [8, 12, 0, 4, 177])
