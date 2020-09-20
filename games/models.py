@@ -18,7 +18,7 @@ class Game(models.Model, CreateableFromMatchHistory):
         pass
 
     def __str__(self):
-        return f"Game {self.id}: {self.name if self.name else 'No name'}"
+        return f"Game {self.id}: Title - {self.name if self.name else 'No name'}/Description - {self.description}"
 
 
 class GameInfo(models.Model, CreateableFromMatchHistory):
@@ -28,6 +28,9 @@ class GameInfo(models.Model, CreateableFromMatchHistory):
     @classmethod
     def setup_from_match_history(cls, match_history, new_model, *args, **kwargs):
         new_model.winner = match_history.winner
+
+    def __str__(self):
+        return f"GameInfo(winner: {self.winner})"
 
 
 class GameBanList(models.Model, SidedCreateableFromMatchHistory):
@@ -87,7 +90,7 @@ class GamePickList(models.Model, SidedCreateableFromMatchHistory):
 
 
 class GamePlayer(models.Model, CreateableFromMatchHistory):
-    player = models.OneToOneField(
+    player = models.ForeignKey(
         "players.Player", on_delete=models.CASCADE, null=True, blank=True
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
@@ -113,10 +116,12 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
                 new_game_player.champion = champion
                 new_game_player.is_blue_side = True if i == 0 else False
                 try:
+                    print("getting already created player")
                     player_object_from_player_name = Player.objects.get(
                         username=player_name
                     )
                 except Player.DoesNotExist:
+                    print("creating new player")
                     player_object_from_player_name = Player.objects.create(
                         username=player_name
                     )

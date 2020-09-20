@@ -1,9 +1,8 @@
-<h1>Uplaod Match</h1>
+<h1>Games</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<form enctype="multipart/form-data" action="{% url 'games:upload_match_history' %}" method="post">
 {% csrf_token %}
-{{form}}
-<input type="submit" value="Upload">
-</form>
+<ul>
+{% for game in games %}
+    <li>{{game}}</li>
+{% endfor %}
+<ul>

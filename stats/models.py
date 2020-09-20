@@ -30,8 +30,7 @@ class GameStat(models.Model):
     game = models.OneToOneField("games.Game", on_delete=models.CASCADE)
 
     def __str__(self):
-        game_name = self.game.name
-        return f"{game_name}"
+        return f"GameStat(game={self.game})"
 
 
 class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
@@ -92,6 +91,9 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
     @property
     def largest_multi_kills(self):
         return [getattr(self, f"largest_multi_kill_{i+1}") for i in range(5)]
+
+    def __str__(self):
+        return f"GameCombatStat({'blue' if self.is_blue_side else 'red'}, {self.kills}, {self.deaths}, {self.assists}, {self.largest_killing_sprees}, {self.largest_multi_kills})"
 
     KDA = "KDA"
     LARGEST_KILLING_SPREE = "Largest Killing Spree"
@@ -164,6 +166,7 @@ class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
     total_damage_to_champs_3 = models.IntegerField(default=0)
     total_damage_to_champs_4 = models.IntegerField(default=0)
     total_damage_to_champs_5 = models.IntegerField(default=0)
+    is_blue_side = models.BooleanField(default=True)
 
     @property
     def total_damage_to_champs(self):
@@ -174,6 +177,9 @@ class GameDamageStat(models.Model, SidedCreatableStatsFromMatchHistory):
             )
             for i in range(5)
         ]
+
+    def __str__(self):
+        return f"GameDamageStat({'blue' if self.is_blue_side else 'red'}, {self.total_damage_to_champs})"
 
     TOTAL_DAMAGE_TO_CHAMPIONS = "Total Damage to Champions"
 
@@ -211,6 +217,7 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
     control_wards_purchased_3 = models.IntegerField(default=0)
     control_wards_purchased_4 = models.IntegerField(default=0)
     control_wards_purchased_5 = models.IntegerField(default=0)
+    is_blue_side = models.BooleanField(default=True)
 
     @property
     def wards_placed(self):
@@ -235,6 +242,9 @@ class GameWardStat(models.Model, SidedCreatableStatsFromMatchHistory):
             )
             for i in range(5)
         ]
+
+    def __str__(self):
+        return f"GameWardStat({'blue' if self.is_blue_side else 'red'}, {self.wards_placed}, {self.wards_destroyed}, {self.control_wards_purchased})"
 
     WARDS_PLACED = "Wards Placed"
     WARDS_DESTROYED = "Wards Destroyed"
@@ -284,6 +294,7 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
     neutral_minions_killed_3 = models.IntegerField(default=0)
     neutral_minions_killed_4 = models.IntegerField(default=0)
     neutral_minions_killed_5 = models.IntegerField(default=0)
+    is_blue_side = models.BooleanField(default=True)
 
     @property
     def gold_earned(self):
@@ -322,6 +333,9 @@ class GameIncomeStat(models.Model, SidedCreatableStatsFromMatchHistory):
             )
             for i in range(5)
         ]
+
+    def __str__(self):
+        return f"GameIncomeStat({'blue' if self.is_blue_side else 'red'}, {self.gold_earned}, {self.gold_spent}, {self.minions_killed}, {self.neutral_minions_killed})"
 
     GOLD_EARNED = "Gold Earned"
     GOLD_SPENT = "Gold Spent"
