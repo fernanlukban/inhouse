@@ -1,7 +1,14 @@
 <h1> Players </h1>
-<ul>
+<table>
+    <tr>
+        {% for header in headers %}
+            <td> {{header}} </td>
+        {% endfor %}
+    </tr>
 {% for username, generated_stats in stats.items %}
-    <li> {{username}} </li>
-    {% include "players/player_generated_stats.html" with generated_stats=generated_stats %}
+    <tr>
+        <td> {{username}} </td>
+        {% include "players/player_generated_stats.html" with generated_stats=generated_stats %}
+    </tr>
 {% endfor %}
-</ul>
+</tale>

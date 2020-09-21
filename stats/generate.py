@@ -2,44 +2,67 @@ from games.models import *
 from stats.models import *
 from collections import OrderedDict
 
+USERNAME = "Username"
+WINS = "W"
+LOSSES = "L"
+TOTAL_GAMES = "Total Games"
+WIN_RATE_PCT = "WR%"
+KILLS = "Kills"
+DEATHS = "Deaths"
+ASSISTS = "Assists"
+AVG_KILLS_PER_GAME = "avKPG"
+AVG_DEATHS_PER_GAME = "avDPG"
+AVG_ASSISTS_PER_GAME = "avAPG"
+KDA = "KDA"
+KILL_PCT = "KP%"
+G_PCT = "G%"
+
+HEADERS = [
+    USERNAME,
+    WINS,
+    LOSSES,
+    TOTAL_GAMES,
+    WIN_RATE_PCT,
+    KILLS,
+    DEATHS,
+    ASSISTS,
+    AVG_KILLS_PER_GAME,
+    AVG_DEATHS_PER_GAME,
+    AVG_ASSISTS_PER_GAME,
+    KDA,
+    KILL_PCT,
+    G_PCT,
+]
+
 
 def generate_stats(player):
     stats = OrderedDict(
         {
-            "Games Played": 0,
-            "Games Won": 0,
-            "Average Kills": 0,
-            "Average Deaths": 0,
-            "Average Assists": 0,
-            "KDA": 0,
+            WINS: 0,
+            LOSSES: 0,
+            TOTAL_GAMES: 0,
+            WIN_RATE_PCT: 0,
+            KILLS: 0,
+            DEATHS: 0,
+            ASSISTS: 0,
+            AVG_KILLS_PER_GAME: 0,
+            AVG_DEATHS_PER_GAME: 0,
+            AVG_ASSISTS_PER_GAME: 0,
+            KDA: 0,
+            KILL_PCT: 0,
+            G_PCT: 0,
         }
     )
+
     game_players = GamePlayer.objects.filter(player=player)
+    total_kills_for_team = 0
     for game_player in game_players:
-        # SETS GAMES PLAYED
-        stats["Games Played"] += 1
         game = game_player.game
         info = GameInfo.objects.get(game=game)
-
-        # SETS GAMES WON
-        if (
-            game_player.is_blue_side
-            and info.winner == "blue"
-            or not game_player.is_blue_side
-            and info.winner == "red"
-        ):
-            stats["Games Won"] += 1
-
         stat = GameStat.objects.get(game=game)
         combat = GameCombatStat.objects.get(
             game_stat=stat, is_blue_side=game_player.is_blue_side
         )
-
-        # SETS KDA STUFF
-        stats["Average Kills"] += combat.kills[game_player.pick_order]
-        stats["Average Deaths"] += combat.deaths[game_player.pick_order]
-        stats["Average Assists"] += combat.assists[game_player.pick_order]
-
         damage = GameDamageStat.objects.get(
             game_stat=stat, is_blue_side=game_player.is_blue_side
         )
@@ -49,19 +72,46 @@ def generate_stats(player):
         income = GameIncomeStat.objects.get(
             game_stat=stat, is_blue_side=game_player.is_blue_side
         )
-    total_kills = stats["Average Kills"]
-    total_assists = stats["Average Assists"]
-    total_deaths = stats["Average Deaths"]
-    kda_divisor = 1 if total_deaths == 0 else total_deaths
-    stats["KDA"] = f"{(total_kills + total_assists)/kda_divisor:.2f}"
-    games_divisor = stats["Games Played"] if stats["Games Played"] != 0 else 1
-    stats["Average Kills"] /= games_divisor
-    stats["Average Deaths"] /= games_divisor
-    stats["Average Assists"] /= games_divisor
-    stats["Total Kills"] = total_kills
-    stats["Total Deaths"] = total_deaths
-    stats["Total Assists"] = total_assists
-    wr = stats["Games Won"] / max(stats["Games Played"], 1)
-    stats["WR%"] = f"{wr*100:.2f}%"
+
+        # SETS GAMES PLAYED
+        stats[TOTAL_GAMES] += 1
+
+        # SETS GAMES WON
+        if (
+            game_player.is_blue_side
+            and info.winner == "blue"
+            or not game_player.is_blue_side
+            and info.winner == "red"
+        ):
+            stats[WINS] += 1
+        else:
+            stats[LOSSES] += 1
+
+        # SETS KDA STUFF
+        player_combat_stats = combat.get_stats(game_player.pick_order)
+        stats[KILLS] += player_combat_stats["kills"]
+        stats[DEATHS] += player_combat_stats["deaths"]
+        stats[ASSISTS] += player_combat_stats["assists"]
+        total_kills_for_team += sum(combat.kills)
+
+    # SETS WR
+    stats[WIN_RATE_PCT] = f"{stats[WINS] / max(1, stats[TOTAL_GAMES])*100: 2.1f}%"
+
+    # SETS AVERAGE KDA STUFF
+    stats[AVG_KILLS_PER_GAME] = f"{stats[KILLS] / max(1, stats[TOTAL_GAMES]): 2.1f}"
+    stats[AVG_DEATHS_PER_GAME] = f"{stats[DEATHS] / max(1, stats[TOTAL_GAMES]): 2.1f}"
+    stats[AVG_ASSISTS_PER_GAME] = f"{stats[ASSISTS] / max(1, stats[TOTAL_GAMES]): 2.1f}"
+
+    # SETS KDA STUFF
+    stats[KDA] = f"{(stats[KILLS] + stats[ASSISTS]) / max(1, stats[DEATHS]): 2.1f}"
+
+    # SETS KP%
+    stats[
+        KILL_PCT
+    ] = f"{(stats[KILLS] + stats[ASSISTS]) / max(1, total_kills_for_team)*100: 2.1f}%"
+
+    # SETS G%
+    total_num_games = len(Game.objects.all())
+    stats[G_PCT] = f"{stats[TOTAL_GAMES] / max(1, total_num_games)*100: 2.1f}%"
 
     return stats

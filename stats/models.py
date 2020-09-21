@@ -92,6 +92,15 @@ class GameCombatStat(models.Model, SidedCreatableStatsFromMatchHistory):
     def largest_multi_kills(self):
         return [getattr(self, f"largest_multi_kill_{i+1}") for i in range(5)]
 
+    def get_stats(self, player_num):
+        return {
+            "kills": self.kills[player_num],
+            "deaths": self.deaths[player_num],
+            "assists": self.assists[player_num],
+            "largest_killing_spree": self.largest_killing_sprees[player_num],
+            "largest_multi_kill": self.largest_multi_kills[player_num],
+        }
+
     def __str__(self):
         return f"GameCombatStat({'blue' if self.is_blue_side else 'red'}, {self.kills}, {self.deaths}, {self.assists}, {self.largest_killing_sprees}, {self.largest_multi_kills})"
 
