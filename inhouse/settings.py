@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("INHOUSE_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["138.197.195.31", "fernyfoods.com"]
+ALLOWED_HOSTS = ["138.197.195.31", "fernyfoods.com", "localhost"]
 
 
 # Application definition

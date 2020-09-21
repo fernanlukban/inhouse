@@ -56,6 +56,8 @@ def generate_stats(player):
 
     game_players = GamePlayer.objects.filter(player=player)
     total_kills_for_team = 0
+    total_gold_for_team = 0
+    total_gold = 0
     for game_player in game_players:
         game = game_player.game
         info = GameInfo.objects.get(game=game)
@@ -94,6 +96,10 @@ def generate_stats(player):
         stats[ASSISTS] += player_combat_stats["assists"]
         total_kills_for_team += sum(combat.kills)
 
+        # SETS GOLD%
+        total_gold += income.gold_earned[game_player.pick_order]
+        total_gold_for_team += sum(income.gold_earned)
+
     # SETS WR
     stats[WIN_RATE_PCT] = f"{stats[WINS] / max(1, stats[TOTAL_GAMES])*100: 2.1f}%"
 
@@ -111,7 +117,6 @@ def generate_stats(player):
     ] = f"{(stats[KILLS] + stats[ASSISTS]) / max(1, total_kills_for_team)*100: 2.1f}%"
 
     # SETS G%
-    total_num_games = len(Game.objects.all())
-    stats[G_PCT] = f"{stats[TOTAL_GAMES] / max(1, total_num_games)*100: 2.1f}%"
+    stats[G_PCT] = f"{total_gold / total_gold_for_team*100: 2.1f}%"
 
     return stats
