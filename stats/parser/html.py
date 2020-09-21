@@ -51,11 +51,19 @@ class MatchHistory:
     def parse_picks(cls, soup):
         # select lets us find a div that has both team and classic but in any order
         picks_container = soup.find_all("div", class_="team-selector")
-        if len(picks_container) != 2:
-            raise Exception("Could not properly find picks")
+        if len(picks_container) < 2:
+            picks_container = soup.find_all("div", class_="champion-icon binding")[:10]
+            champion_names = []
+            for pick in picks_container:
+                champion_name = pick.find(lambda div: div.has_attr("data-rg-id"))
+                champion_names.append(champion_name["data-rg-id"])
+            return champion_names[:5], champion_names[5:]
+        else:
+            blue_picks = picks_container[0]
+            red_picks = picks_container[1]
         return (
-            cls.find_champion_names_for_picks(picks_container[0]),
-            cls.find_champion_names_for_picks(picks_container[1]),
+            cls.find_champion_names_for_picks(blue_picks),
+            cls.find_champion_names_for_picks(red_picks),
         )
 
     @classmethod
