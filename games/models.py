@@ -127,6 +127,7 @@ class GamePlayer(models.Model, CreateableFromMatchHistory):
                     )
                 new_game_player.player = player_object_from_player_name
                 players.append(new_game_player)
+                new_game_player.pick_order = j
         return players
 
     @classmethod

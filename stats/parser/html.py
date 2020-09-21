@@ -105,7 +105,7 @@ class MatchHistory:
     @classmethod
     def parse_winner(cls, soup):
         summary = soup.find("div", class_="team-summary")
-        blue_win = summary.find("div", class_="game-conclusion").text
+        blue_win = summary.find("div", class_="game-conclusion").text.strip()
         return "blue" if blue_win == "VICTORY" else "red"
 
     @classmethod

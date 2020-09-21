@@ -1,0 +1,7 @@
+<h1> Players </h1>
+<ul>
+{% for username, generated_stats in stats.items %}
+    <li> {{username}} </li>
+    {% include "players/player_generated_stats.html" with generated_stats=generated_stats %}
+{% endfor %}
+</ul>

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
+from stats.generate import generate_stats
 
 from .models import Player
 
@@ -7,7 +8,10 @@ from .models import Player
 
 
 def index(request):
-    return HttpResponse("Hello")
+    stats = {}
+    for player in Player.objects.all():
+        stats[player.username] = generate_stats(player)
+    return render(request, "players/index.html", {"stats": stats})
 
 
 def view_player(request, username):
