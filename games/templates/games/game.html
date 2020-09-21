@@ -1,0 +1,13 @@
+<li> {{ game }} </li>
+<table>
+<tr>
+    <td> Blue </td>
+    <td> Red </td>
+</tr>
+{% for blue_player, red_player in players %}
+<tr>
+    <td> {{blue_player}} </td>
+    <td> {{red_player}} </td>
+<tr>
+{% endfor %}
+</table>

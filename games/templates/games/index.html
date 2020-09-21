@@ -2,7 +2,7 @@
 
 {% csrf_token %}
 <ul>
-{% for game in games %}
-    <li>{{game}}</li>
+{% for game, players in games_and_players %}
+    {% include "games/game.html" with game=game players=players%}
 {% endfor %}
 <ul>

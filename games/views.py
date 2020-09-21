@@ -4,7 +4,7 @@ from django.views.generic.edit import FormView
 from django.urls import reverse
 from .forms import MatchHistoryFileFieldForm
 from .upload import handle_uploaded_match_history
-from .models import Game
+from .models import *
 
 # Create your views here.
 def upload_match_history(request):
@@ -26,4 +26,14 @@ def upload_match_history(request):
 
 def show_games(request):
     games = Game.objects.all()
-    return render(request, "games/index.html", {"games": games})
+    players = []
+    for game in games:
+        blue_players = GamePlayer.objects.filter(game=game).filter(is_blue_side=True)
+        red_players = GamePlayer.objects.filter(game=game).filter(is_blue_side=False)
+        blue_red_pairs = zip(
+            [game_player.player for game_player in blue_players],
+            [game_player.player for game_player in red_players],
+        )
+        players.append(blue_red_pairs)
+    games_and_players = zip(games, players)
+    return render(request, "games/index.html", {"games_and_players": games_and_players})
