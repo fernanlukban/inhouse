@@ -25,7 +25,7 @@ SECRET_KEY = "p*-mm7%8-%&@j+c9gyvn7*0#3ikh$2z^3!n^+^e)d1k)i7-ybt"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["138.197.195.31", "fernyfoods.com"]
 
 
 # Application definition
