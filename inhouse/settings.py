@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("INHOUSE_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG", False) == "True"
 
 ALLOWED_HOSTS = ["138.197.195.31", "fernyfoods.com", "localhost"]
 
