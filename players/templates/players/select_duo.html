@@ -1,0 +1,5 @@
+<form enctype="multipart/form-data" action="{% url 'players:select_duo' %}" method="post">
+{% csrf_token %}
+{{form}}
+<input type="submit" value="Generate">
+</form>
