@@ -2,4 +2,11 @@
 
 {% include 'players/select_duo.html'%}
 
-{% include 'players/player_table.html' %}
+<h2> Total <h2>
+{% include 'players/player_table.html' with stats=total_stats %}
+
+<h2> H2H <h2>
+{% include 'players/player_table.html' with stats=h2h_stats %}
+
+<h2> With <h2>
+{% include 'players/player_table.html' with stats=with_stats %}

@@ -27,7 +27,63 @@ def view_player(request, username):
     return HttpResponse(f"{player}")
 
 
-def generate_duo_stats(username1, username2):
+def intersection_games(player1, player2):
+    player1_games = set(
+        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
+    )
+    player2_games = set(
+        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player2)]
+    )
+    intersection_games = player1_games.intersection(player2_games)
+    return intersection_games
+
+
+def is_same_side(game_player1, game_player2):
+    return (
+        game_player1.is_blue_side
+        and game_player2.is_blue_side
+        or not game_player1.is_blue_side
+        and not game_player2.is_blue_side
+    )
+
+
+def h2h_games(player1, player2):
+    player1_games = set(
+        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
+    )
+    h2h_games = []
+    for game in player1_games:
+        gameplayer1 = GamePlayer.objects.filter(game=game).get(player=player1)
+        gameplayer2 = None
+        try:
+            gameplayer2 = GamePlayer.objects.filter(game=game).get(player=player2)
+        except GamePlayer.DoesNotExist:
+            print("error")
+        if gameplayer2 and not is_same_side(gameplayer1, gameplayer2):
+            h2h_games.append(game)
+    print(h2h_games)
+    return h2h_games
+
+
+def with_games(player1, player2):
+    player1_games = set(
+        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
+    )
+    with_games = []
+    for game in player1_games:
+        gameplayer1 = GamePlayer.objects.filter(game=game).get(player=player1)
+        gameplayer2 = None
+        try:
+            gameplayer2 = GamePlayer.objects.filter(game=game).get(player=player2)
+        except GamePlayer.DoesNotExist:
+            print("error")
+        if gameplayer2 and is_same_side(gameplayer1, gameplayer2):
+            h2h_games.append(game)
+    print(with_games)
+    return with_games
+
+
+def generate_duo_stats(username1, username2, games_filter):
     if username1 == username2:
         raise Http404(
             f"You entered {username1} twice, please choose different summoners"
@@ -38,13 +94,7 @@ def generate_duo_stats(username1, username2):
     except Player.DoesNotExist:
         raise Http404(f"Players: {username1}  or {username2} does not exist")
 
-    player1_games = set(
-        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
-    )
-    player2_games = set(
-        [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player2)]
-    )
-    intersection_games = player1_games.intersection(player2_games)
+    filtered_games = games_filter(player1, player2)
 
     aggregated_stats = {
         player1.username: OrderedDict(stats_dict),
@@ -55,7 +105,7 @@ def generate_duo_stats(username1, username2):
         total_kills_for_team = 0
         total_gold_for_team = 0
         total_gold = 0
-        for game in intersection_games:
+        for game in filtered_games:
             game_player = GamePlayer.objects.filter(player=player).get(game=game)
             info = GameInfo.objects.get(game=game)
             stat = GameStat.objects.get(game=game)
@@ -125,7 +175,7 @@ def generate_duo_stats(username1, username2):
         # SETS G%
         aggregated_stats[player.username][
             G_PCT
-        ] = f"{total_gold / total_gold_for_team*100: 2.1f}%"
+        ] = f"{total_gold / max(1, total_gold_for_team)*100: 2.1f}%"
     return aggregated_stats
 
 
@@ -141,13 +191,28 @@ def select_duo(request):
         form = DuoForm(request.POST)
         print(form.data)
         if form.is_valid():
-            aggregated_stats = generate_duo_stats(
-                form.data["username1"], form.data["username2"]
+            aggregated_stats_total = generate_duo_stats(
+                form.data["username1"], form.data["username2"], intersection_games
             )
+
+            aggregated_stats_h2h = generate_duo_stats(
+                form.data["username1"], form.data["username2"], h2h_games
+            )
+
+            aggregated_stats_with = generate_duo_stats(
+                form.data["username1"], form.data["username2"], with_games
+            )
+
             return render(
                 request,
                 "players/duo.html",
-                {"stats": aggregated_stats, "headers": HEADERS, "form": form},
+                {
+                    "total_stats": aggregated_stats_total,
+                    "h2h_stats": aggregated_stats_h2h,
+                    "with_stats": aggregated_stats_with,
+                    "headers": HEADERS,
+                    "form": form,
+                },
             )
         else:
             print("not valid")
