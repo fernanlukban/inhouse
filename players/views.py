@@ -51,7 +51,7 @@ def h2h_games(player1, player2):
     player1_games = set(
         [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
     )
-    h2h_games = []
+    games = []
     for game in player1_games:
         gameplayer1 = GamePlayer.objects.filter(game=game).get(player=player1)
         gameplayer2 = None
@@ -60,16 +60,16 @@ def h2h_games(player1, player2):
         except GamePlayer.DoesNotExist:
             print("error")
         if gameplayer2 and not is_same_side(gameplayer1, gameplayer2):
-            h2h_games.append(game)
-    print(h2h_games)
-    return h2h_games
+            games.append(game)
+    print(games)
+    return games
 
 
 def with_games(player1, player2):
     player1_games = set(
         [gameplayer.game for gameplayer in GamePlayer.objects.filter(player=player1)]
     )
-    with_games = []
+    games = []
     for game in player1_games:
         gameplayer1 = GamePlayer.objects.filter(game=game).get(player=player1)
         gameplayer2 = None
@@ -78,9 +78,9 @@ def with_games(player1, player2):
         except GamePlayer.DoesNotExist:
             print("error")
         if gameplayer2 and is_same_side(gameplayer1, gameplayer2):
-            h2h_games.append(game)
-    print(with_games)
-    return with_games
+            games.append(game)
+    print(games)
+    return games
 
 
 def generate_duo_stats(username1, username2, games_filter):
