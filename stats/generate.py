@@ -34,25 +34,25 @@ HEADERS = [
     G_PCT,
 ]
 
+stats_dict = {
+    WINS: 0,
+    LOSSES: 0,
+    TOTAL_GAMES: 0,
+    WIN_RATE_PCT: 0,
+    KILLS: 0,
+    DEATHS: 0,
+    ASSISTS: 0,
+    AVG_KILLS_PER_GAME: 0,
+    AVG_DEATHS_PER_GAME: 0,
+    AVG_ASSISTS_PER_GAME: 0,
+    KDA: 0,
+    KILL_PCT: 0,
+    G_PCT: 0,
+}
+
 
 def generate_stats(player):
-    stats = OrderedDict(
-        {
-            WINS: 0,
-            LOSSES: 0,
-            TOTAL_GAMES: 0,
-            WIN_RATE_PCT: 0,
-            KILLS: 0,
-            DEATHS: 0,
-            ASSISTS: 0,
-            AVG_KILLS_PER_GAME: 0,
-            AVG_DEATHS_PER_GAME: 0,
-            AVG_ASSISTS_PER_GAME: 0,
-            KDA: 0,
-            KILL_PCT: 0,
-            G_PCT: 0,
-        }
-    )
+    stats = OrderedDict(stats_dict)
 
     game_players = GamePlayer.objects.filter(player=player)
     total_kills_for_team = 0
