@@ -15,7 +15,7 @@ from .forms import DuoForm
 def index(request):
     stats = {}
     for player in Player.objects.all():
-        aggregated_stats[player.username][player.username] = generate_stats(player)
+        stats[player.username] = generate_stats(player)
     return render(request, "players/index.html", {"stats": stats, "headers": HEADERS})
 
 

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["138.197.195.31", "fernyfoods.com", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
+    "inhouse",
     "players.apps.PlayersConfig",
     "games.apps.GamesConfig",
     "stats.apps.StatsConfig",
